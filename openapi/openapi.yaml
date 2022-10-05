@@ -1,0 +1,27 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Money Transfer API Documentation
+
+servers:
+  - url: " "  
+
+tags:
+      
+  - name: Money Transfer  
+    description: ---
+
+paths:
+  /createdisbursement:
+    $ref: paths/createdisbursement.yaml
+
+  /getalldisbursements:
+    $ref: paths/getalldisbursements.yaml
+
+  /getdisbursementbyidempotencykey:
+    $ref: paths/getdisbursementbyidempotencykey.yaml
+
+  /getdisbursementbyid:
+    $ref: paths/getdisbursementbyid.yaml
+
+  

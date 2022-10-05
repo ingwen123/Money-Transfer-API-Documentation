@@ -1,0 +1,291 @@
+get:
+  summary: Get All Disbursements
+  tags:
+    - Money Transfer
+  
+  description: |
+    Use this endpoint to get the list of transaction you've made. By default, the result will be paginated by 20. You can change the pagination, filter, and sort the result by changing the url parameter.
+
+    Format of the url parameter:
+
+    https://bigflip.id/api/v3/disbursement?pagination=pagination&page=page&sort=sort&attribute=value
+  
+  parameters:
+    
+    - in: query
+      name: pagination
+      description: The pagination of the result. Default value is 20
+      schema:
+        type: integer
+      required: false
+
+    - in: query
+      name: page
+      description: The page number of the result to be viewed.
+      schema:
+        type: integer
+      required: false
+    
+    - in: query
+      name: sort
+      description: |
+        Sort the result by the attribute. Use the attribute name (e.g sort=id) to sort in ascending order or dash+attribute name (e.g sort=-id) to sort in descending order.
+
+        You can also filter the result by changing attribute with the attribute to be filtered and value with the filter value. You can filter more than one attribute by appending another attribute filter to the url. Attribute that can be filtered are:
+
+        * id - exact comparison
+        * amount - exact comparison
+        * status - exact comparison
+        * timestamp - “like” comparison
+        * bank_code - “like” comparison
+        * account_number - “like” comparison
+        * recipient_name - “like” comparison
+        * remark - “like” comparison
+        * time_served - “like” comparison
+        * created_from - “like” comparison
+        * direction - exact comparison
+
+        Example:
+
+        https://bigflip.id/api/v3/disbursement?pagination=10&page=5&sort=-id
+
+      schema: 
+        type: string
+      required: false
+
+  responses:
+    "200" :
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              total_data:
+                example: 85
+                description: Total data returned in all page
+              
+              data_per_page:
+                example: 20
+                description: Total data returned in current page
+
+              total_page:
+                example: 5
+                description: Total/max page available
+
+              page: 
+                example: 1
+                description: Current page
+              
+              data: 
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    id:
+                      description: Flip's transaction id
+                    user_id:
+                      description: Your account user id in our system
+                    amount:
+                      description: The amount of money to be disbursed in IDR
+                    status:
+                      description: |
+                        Transaction status. Possible values are:
+                        
+                        * PENDING
+
+                        Disbursement is still in process
+
+                        * CANCELLED
+
+                        The transaction is cancelled and the amount of the transaction plus the transaction fee will be credited to your balance. This will happen if the transfer process are failed for reason such as inactive recipient account, wrong account number, etc
+
+                        * DONE
+
+                        Disbursement process is finished and the money have been sent to the recipient
+                    
+                    reason:
+                      description: |
+                        The reason value will be given if the transaction status is CANCELLED. Possible values are:
+
+                        * INACTIVE_ACCOUNT
+
+                        Inactive account / Nomor rekening tidak aktif
+
+                        * NOT_REGISTERED_ACCOUNT
+                        
+                        Not registered account / Nomor rekening tidak terdaftar
+
+                        * CANT_RECEIVE_TRANSFER
+
+                        Can't receive transfer / Rekening tujuan tidak dapat menerima transfer
+
+                        * INTERMITTENT_DISTURBANCE_ON_BENEFICIARY_BANK
+
+                        Intermittent disturbance on destination bank / Bank tujuan sementara mengalami gangguan
+                        
+                        * BENEFICIARY_ACCOUNT_NOT_VERIFIED
+
+                        Account is not verified / Rekening tujuan belum terverifikasi
+
+                    timestamp:
+                      description: The time when the disbursement request created. Time will be in GMT+7 with yyyy-mm-dd hh:mm:ss format
+
+                    bank_code: 
+                      description: Bank code of the recipient bank
+                    
+                    account_number:
+                      description: The account number of the recipient
+                    
+                    recipient_name: 
+                      description: The name of the recipient account holder. If the account number haven't cached by Flip yet, this attribute will show - (dash) instead
+
+                    sender_bank:
+                      description: The default sender bank in your account
+                    
+                    remark: 
+                      description: Remark to be included in the transfer made to the recipient
+
+                    receipt:
+                      description: Url of the transfer receipt. The receipt will be a screenshot taken from the internet banking interface of each bank. This attribute will only show the url when the status is DONE
+
+                    time_served: 
+                      description: The time when the transaction is finished. Will only show valid value when the status is DONE
+                    
+                    bundle_id:
+                      description: The bundle id of the transaction made from Flip for Business Dashboard (csv upload or manual input). For the transaction created from API, the value will always be 0
+
+                    company_id:
+                      description: Your Flip for Business account user id in our system
+                    
+                    recipient_city: 
+                      description: City code of the recipient city
+                    
+                    created_from: 
+                      description: |
+                        The channel of which the transaction was created. Possible values are:
+                          * API
+                          * DASHBOARD
+
+                    direction: 
+                      description: |
+                        The direction of the transaction. Possible values are:
+
+                        * DOMESTIC_TRANSFER
+
+                        Common Disbursement from Indonesia to Indonesian recipient
+
+                        * DOMESTIC_SPECIAL_TRANSFER
+
+                        Special disbursement from the user of a Money Transfer Company residing in Indonesia to Indonesian recipient
+
+                        * FOREIGN_INBOUND_SPECIAL_TRANSFER
+
+                        Special disbursement from the user of a Money Transfer Company residing in a foreign country to Indonesian recipient
+                    
+                    sender: 
+                      type: object
+                      description: Possible values are null if the transaction is a common disbursement, and sender object if the transaction is a special disbursment.
+                      properties:
+                        sender_name:
+                          description: The name of the user of the Money Transfer Company that act as a sender
+
+                        place_of_birth:
+                          description: City/country code of the Sender's place of birth
+
+                        date_of_birth: 
+                          description: Sender's date of birth
+
+                        address:
+                          description: Sender’s address
+
+                        sender_identity_type:
+                          description: |
+                            Sender's identity type. Possible value are:
+                            * nat_id
+                            * drv_lic
+                            * passport
+                            * bank_acc
+                        
+                        sender_identity_number:
+                          description: Sender's identity number                         
+
+                        sender_country:
+                          description: Country code of the Sender's country
+                          
+                        
+                        job: 
+                          description: |
+                            Sender's job. Possible values are:
+                        
+                            * housewife
+                            * entrepreneur
+                            * private_employee
+                            * government_employee
+                            * foundation_board
+                            * indonesian_migrant_worker
+                            * others
+
+                    fee:
+                      description: The fee of the transaction
+                    
+                    benecifiary_email:
+                      description: List of the recipient emails
+                    
+                    idempotency_key: 
+                      description: The idempotency key used to create the disbursement
+
+                example:
+                  - id: 10
+                    user_id: 20
+                    amount: 10000
+                    status: PENDING
+                    reason: ""
+                    time_stamp: "2017-08-28 14:32:47"
+                    bank_code: "bni"
+                    account_number: "1122333300"
+                    recipient_name: "John Doe"
+                    sender_bank: "bri"
+                    remark: "some remark"
+                    receipt: ""
+                    time_served: "0000-00-00 00:00:00"
+                    bundle_id: 0
+                    company_id: 7
+                    recipient_city: 391
+                    created_from: API
+                    direction: DOMESTIC_TRANSFER
+                    sender: null
+                    fee: 1500
+                    beneficiary_email: test@mail.com,user@mail.com
+                    idempotency_key: idem-key-1
+                  
+                  - id: 11
+                    user_id: 20
+                    amount: 10000
+                    status: DONE
+                    reason: ""
+                    time_stamp: "2017-08-24 21:21:23"
+                    bank_code: "bni"
+                    account_number: "1122333301"
+                    recipient_name: "John Smith"
+                    sender_bank: "bri"
+                    remark: "some remark"
+                    receipt: "someurl.jpg"
+                    time_served: "2017-08-25 09:11:35"
+                    bundle_id: 0
+                    company_id: 7
+                    recipient_city: 391
+                    created_from: API
+                    direction: FOREIGN_INBOUND_SPECIAL_TRANSFER
+                    sender: 
+                      sender_name: John Doe
+                      place_of_birth: 391
+                      date_of_birth: "1992-01-01"
+                      address: Some Address Street 123
+                      sender_identity_type: nat_id
+                      sender_identity_number: asdas213123
+                      sender_country: 100252
+                      job: entrepreneur
+                    fee: 1500
+                    beneficiary_email: test@mail.com,user@mail.com
+                    idempotency_key: idem-key-1

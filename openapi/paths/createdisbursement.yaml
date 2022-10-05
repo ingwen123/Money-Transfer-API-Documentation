@@ -1,0 +1,89 @@
+post:
+  summary: Create Disbursement
+  tags:
+    - Money Transfer
+  
+  description: |
+    
+    Use this endpoint to create a common disbursement transaction. 
+  
+    <br>
+
+    <p style="font-size: 18px"> Request URL </p>
+
+    https://bigflip.id/api/v3/disbursement
+
+    <br>
+
+  parameters:
+    - in: header
+      name: Content-Type
+      description: "Request content type: application/x-www-form-urlencoded."
+      schema:
+        type: string
+      required: true
+
+    - in: header
+      name: idempotency-key
+      description: "Idempotency key"
+      schema:
+        type: string
+      required: true
+    
+    - in: header
+      name: X-TIMESTAMP
+      description: Request timestamp. The format will follow the ISO8601 format.
+      schema: 
+        type: string
+      required: false
+
+
+
+  requestBody:
+    required: true 
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+
+            account_number: 
+              type: string  
+              required: true
+              example: "1122333300"
+              description: The account number of the recipient
+
+            bank_code: 
+              type: string  
+              required: true
+              example: "bni"
+              description: Bank code of the recipient bank.
+
+            amount:
+              type: integer 
+              required: true
+              example: "10000"
+              description: The amount of money to be disbursed
+
+            remark: 
+              type: string
+              required: false 
+              example: b3108ab9222fd968e3043351adf1f9998e77f4bfbce5d0cbcc36bac826e1d858
+              description: Signature hash value
+
+            recipient_city: 
+              type: integer
+              required: false 
+              example: "391"
+              description: City code of the recipient city.
+            
+            beneficiary_email: 
+              type: string
+              required: false 
+              example: "test@mail.com,user@mail.com"
+              description: List of the recipient emails (separated by comma)
+
+  responses:
+    200:
+      description: "See detailed explanation at [Get All Money Transfer V3](#tag/Money-Transfer/paths/~1getalldisbursements/get) response"
+      
